@@ -2,8 +2,8 @@
 while True:
 
     print("1. About UGCRuleBook")
-    print("2. Sample Student Rights Questions")
-    print("3. Basic Rule Check")
+    print("2. Sample Student Rights Questions You Can Ask")
+    print("3. Check some rules")
     print("0. Exit")
 
     choice = input("\nEnter your choice: ")
