@@ -1,26 +1,66 @@
 [
     {
-        "rule_title": "False Information in Prospectus",
-        "regulation_or_circular": "UGC Grievance Regulations",
+        "rule_title": "False or Misleading Prospectus",
+        "regulation_or_circular": "UGC (Redressal of Grievances of Students) Regulations, 2023",
         "year": 2023,
-        "student_right": "Students can complain about false or misleading information in the prospectus.",
-        "where_to_complain": "Students' Grievance Redressal Committee",
+        "student_right": "publication by the institution of any information in the prospectus, which is false or misleading, and not based on facts;",
+        "where_to_complain": "Students' Grievance Redressal Committee (SGRC)",
         "source_url": "https://www.ugc.gov.in/pdfnews/4675881_Regulation.pdf"
     },
     {
-        "rule_title": "Retention of Student Documents",
-        "regulation_or_circular": "UGC Grievance Regulations",
+        "rule_title": "Withholding Student Documents",
+        "regulation_or_circular": "UGC (Redressal of Grievances of Students) Regulations, 2023",
         "year": 2023,
-        "student_right": "Students can complain if their certificates or documents are improperly retained.",
-        "where_to_complain": "Students' Grievance Redressal Committee",
+        "student_right": "withholding of, or refusal to return, any document in the form of certificates of degree, diploma or any other award or other document deposited by a student for the purpose of seeking admission in such institution, with a view to induce or compel such student to pay any fee or fees in respect of any course or program of study which such student does not intend to pursue;",
+        "where_to_complain": "Students' Grievance Redressal Committee (SGRC)",
         "source_url": "https://www.ugc.gov.in/pdfnews/4675881_Regulation.pdf"
     },
     {
-        "rule_title": "Delay in Fee Refund",
-        "regulation_or_circular": "UGC Grievance Regulations",
+        "rule_title": "Excess Fee Demand",
+        "regulation_or_circular": "UGC (Redressal of Grievances of Students) Regulations, 2023",
         "year": 2023,
-        "student_right": "Students can complain about delays in eligible fee refunds.",
-        "where_to_complain": "Students' Grievance Redressal Committee",
+        "student_right": "demand of money in excess of that specified to be charged in the declared admission policy of the institution;",
+        "where_to_complain": "Students' Grievance Redressal Committee (SGRC)",
+        "source_url": "https://www.ugc.gov.in/pdfnews/4675881_Regulation.pdf"
+    },
+    {
+        "rule_title": "Delay or Denial of Fee Refund",
+        "regulation_or_circular": "UGC (Redressal of Grievances of Students) Regulations, 2023",
+        "year": 2023,
+        "student_right": "delay in, or denial of, the refund of fees due to a student who withdraws admission within the time mentioned in the prospectus, subject to guidelines, if any, issued by the Commission, from time to time;",
+        "where_to_complain": "Students' Grievance Redressal Committee (SGRC)",
+        "source_url": "https://www.ugc.gov.in/pdfnews/4675881_Regulation.pdf"
+    },
+    {
+        "rule_title": "Student Grievance Committee",
+        "regulation_or_circular": "UGC (Redressal of Grievances of Students) Regulations, 2023",
+        "year": 2023,
+        "student_right": "A complaint from an aggrieved student relating to the institution shall be addressed to the Chairperson, Students’ Grievance Redressal Committee (SGRC).",
+        "where_to_complain": "Chairperson, Students' Grievance Redressal Committee (SGRC)",
+        "source_url": "https://www.ugc.gov.in/pdfnews/4675881_Regulation.pdf"
+    },
+    {
+        "rule_title": "SGRC Complaint Resolution",
+        "regulation_or_circular": "UGC (Redressal of Grievances of Students) Regulations, 2023",
+        "year": 2023,
+        "student_right": "The SGRC shall send its report with recommendations, if any, to the competent authority of the institution concerned and a copy thereof to the aggrieved student, pr eferably within a period of 15 working days from the date of receipt of the complaint.",
+        "where_to_complain": "Students' Grievance Redressal Committee (SGRC)",
+        "source_url": "https://www.ugc.gov.in/pdfnews/4675881_Regulation.pdf"
+    },
+    {
+        "rule_title": "Appeal to Ombudsperson",
+        "regulation_or_circular": "UGC (Redressal of Grievances of Students) Regulations, 2023",
+        "year": 2023,
+        "student_right": "Any student aggrieved by the decision of the Students’ Grievance Redressal Committee may prefer an appeal to the Ombudsperson, within a period of fifteen days from the date of receipt of such decision.",
+        "where_to_complain": "University Ombudsperson",
+        "source_url": "https://www.ugc.gov.in/pdfnews/4675881_Regulation.pdf"
+    },
+    {
+        "rule_title": "Ombudsperson Resolution Timeline",
+        "regulation_or_circular": "UGC (Redressal of Grievances of Students) Regulations, 2023",
+        "year": 2023,
+        "student_right": "The Ombudsperson shall make all efforts to resolve the grievances within a period of 30 days of receiving the appeal from the aggrieved student",
+        "where_to_complain": "University Ombudsperson",
         "source_url": "https://www.ugc.gov.in/pdfnews/4675881_Regulation.pdf"
     }
 ]
