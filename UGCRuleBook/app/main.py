@@ -2,6 +2,8 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from app.smart_search import smart_search
+from pathlib import Path
+from app.llm import get_llm_response
 
 from app.records import load_records, get_by_id, search
 
@@ -14,6 +16,8 @@ records = load_records()
 class Question(BaseModel):
     question: str
 
+class ChatRequest(BaseModel):
+    question: str
 
 @app.get("/health")
 def health():
@@ -49,4 +53,45 @@ def ask_question(data: Question):
         "question": data.question,
         "matching_records": results,
         "message": "Search completed"
+    }
+
+
+
+@app.post("/chat")
+def chat(data: ChatRequest):
+    results = smart_search(records, data.question)
+
+    system_prompt = Path("prompts/system.txt").read_text()
+
+    task_prompt = Path("prompts/answer_question.txt").read_text()
+
+    context = "\n".join([
+        str(record) for record in results
+    ])
+
+    prompt = task_prompt.format(
+        question=data.question,
+        context=context
+    )
+
+    answer = get_llm_response(prompt, system_prompt)
+
+    follow_up_prompt = Path("prompts/follow_up.txt").read_text()
+
+    follow_up_prompt = follow_up_prompt.format(
+        question=data.question,
+        answer=answer
+    )
+
+    follow_up = get_llm_response(
+        follow_up_prompt,
+        system_prompt
+    )
+
+    confidence = "high" if results else "low"
+
+    return {
+        "answer": answer,
+        "confidence": confidence,
+        "follow_up": follow_up
     }

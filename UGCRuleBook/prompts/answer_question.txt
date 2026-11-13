@@ -1,0 +1,14 @@
+
+Answer the student's question using the UGCRuleBook records provided.
+
+Student question:
+{question}
+
+Available UGCRuleBook records:
+{context}
+
+Instructions:
+- Give a simple and clear answer.
+- Use only the available records.
+- Mention the relevant rule or regulation when available.
+- If the records do not contain the answer, clearly say so.

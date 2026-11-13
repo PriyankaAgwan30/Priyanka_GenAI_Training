@@ -1,0 +1,11 @@
+
+Based on the student's question and the answer provided,
+suggest one useful follow-up question.
+
+Student question:
+{question}
+
+Answer:
+{answer}
+
+Keep the follow-up relevant, short, and easy to understand.
