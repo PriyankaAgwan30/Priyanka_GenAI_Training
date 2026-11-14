@@ -1,4 +1,8 @@
 .env
 .venv/
+.venv314/
 __pycache__/
 *.pyc
+
+# ChromaDB generated database
+data/chroma_db/

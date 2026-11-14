@@ -4,6 +4,7 @@ from pydantic import BaseModel
 from app.smart_search import smart_search
 from pathlib import Path
 from app.llm import get_llm_response
+from app.vectorstore import search_documents
 
 from app.records import load_records, get_by_id, search
 
@@ -94,4 +95,22 @@ def chat(data: ChatRequest):
         "answer": answer,
         "confidence": confidence,
         "follow_up": follow_up
+    }
+
+
+@app.get("/search/semantic")
+def semantic_search_endpoint(q: str):
+
+    if not q.strip():
+        raise HTTPException(
+            status_code=400,
+            detail="Search query cannot be empty"
+        )
+
+    results = search_documents(q, top_k=5)
+
+    return {
+        "question": q,
+        "total_results": len(results),
+        "results": results
     }
