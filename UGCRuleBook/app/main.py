@@ -5,6 +5,7 @@ from app.smart_search import smart_search
 from pathlib import Path
 from app.llm import get_llm_response
 from app.vectorstore import search_documents
+from app.rag import answer_question
 
 from app.records import load_records, get_by_id, search
 
@@ -113,4 +114,16 @@ def semantic_search_endpoint(q: str):
         "question": q,
         "total_results": len(results),
         "results": results
+    }
+
+
+@app.post("/ask")
+def ask(data: Question):
+
+    result = answer_question(data.question)
+
+    return {
+        "question": data.question,
+        "answer": result["answer"],
+        "citations": result["citations"]
     }

@@ -145,18 +145,18 @@ def load_documents():
     return documents
 
 
-def chunk_documents():
-
+def chunk_documents(chunk_size=CHUNK_SIZE, overlap=CHUNK_OVERLAP):
     documents = load_documents()
-
     all_chunks = []
 
     for document in documents:
-
-        text_chunks = split_text(document["text"])
+        text_chunks = split_text(
+            document["text"],
+            chunk_size=chunk_size,
+            overlap=overlap
+        )
 
         for index, chunk in enumerate(text_chunks, start=1):
-
             all_chunks.append({
                 "id": (
                     f"{document['metadata']['source']}_"

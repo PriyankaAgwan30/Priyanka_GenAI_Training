@@ -1,0 +1,92 @@
+[
+  {
+    "id": 1,
+    "question": "Can a student get a fee refund after withdrawing admission?",
+    "expected_keywords": ["refund", "withdraws", "fees"],
+    "answerable": true
+  },
+  {
+    "id": 2,
+    "question": "Can a college withhold original certificates to force fee payment?",
+    "expected_keywords": ["withholding", "certificates", "compel"],
+    "answerable": true
+  },
+  {
+    "id": 3,
+    "question": "How can a student submit a grievance against a college?",
+    "expected_keywords": ["grievance", "online portal", "committee"],
+    "answerable": true
+  },
+  {
+    "id": 4,
+    "question": "What is the role of the Students Grievance Redressal Committee?",
+    "expected_keywords": ["committee", "grievance", "recommendations"],
+    "answerable": true
+  },
+  {
+    "id": 5,
+    "question": "When can a student appeal to the Ombudsperson?",
+    "expected_keywords": ["appeal", "ombudsperson", "SGRC"],
+    "answerable": true
+  },
+  {
+    "id": 6,
+    "question": "Does UGC provide free international air tickets to every student?",
+    "expected_keywords": ["free international air tickets"],
+    "answerable": false
+  },
+  {
+    "id": 7,
+    "question": "What actions can be taken against a student found guilty of ragging?",
+    "expected_keywords": ["ragging", "punishment", "administrative action"],
+    "answerable": true
+  },
+  {
+    "id": 8,
+    "question": "What can a student do if a college publishes false information in its prospectus?",
+    "expected_keywords": ["prospectus", "false", "misleading"],
+    "answerable": true
+  },
+  {
+    "id": 9,
+    "question": "Can a college demand fees beyond its declared admission policy?",
+    "expected_keywords": ["demand", "money", "admission policy"],
+    "answerable": true
+  },
+  {
+    "id": 10,
+    "question": "Within how many days should an institution forward an online grievance to the SGRC?",
+    "expected_keywords": ["15 days", "complaint", "SGRC"],
+    "answerable": true
+  },
+  {
+    "id": 11,
+    "question": "Within how many days should the SGRC submit its report and recommendations?",
+    "expected_keywords": ["15 days", "report", "recommendations"],
+    "answerable": true
+  },
+  {
+    "id": 12,
+    "question": "Within how many days can a student appeal against an SGRC decision?",
+    "expected_keywords": ["15 days", "appeal", "decision"],
+    "answerable": true
+  },
+  {
+    "id": 13,
+    "question": "What information about the Ombudsperson should an institution publish?",
+    "expected_keywords": ["ombudsperson", "website", "prospectus"],
+    "answerable": true
+  },
+  {
+    "id": 14,
+    "question": "What consequences can an institution face for not complying with UGC grievance regulations?",
+    "expected_keywords": ["non-compliance", "Commission", "action"],
+    "answerable": true
+  },
+  {
+    "id": 15,
+    "question": "What is the procedure for reporting ragging in a higher educational institution?",
+    "expected_keywords": ["ragging", "complaint", "anti-ragging"],
+    "answerable": true
+  }
+]
