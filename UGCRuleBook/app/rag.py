@@ -6,7 +6,7 @@ from app.llm import get_llm_response
 MIN_RELEVANCE_SCORE = 0.30
 
 
-def answer_question(question, top_k=5):
+def answer_question(question, top_k=5, conversation_history=None):
 
     if not question.strip():
         return {
@@ -62,14 +62,30 @@ def answer_question(question, top_k=5):
     5. Use simple and understandable language.
     """
 
+    history_text = ""
+
+    if conversation_history:
+        for item in conversation_history[-5:]:
+            history_text += (
+                f"\nPrevious Question: {item['question']}\n"
+                f"Previous Answer: {item['result']}\n"
+            )
+
     prompt = f"""
+    Previous Conversation:
+    {history_text}
+
     Student Question:
     {question}
 
     Retrieved Context:
     {context}
 
-    Answer the question using only the retrieved context.
+    Answer the current question using only the retrieved context.
+    Use previous conversation only to understand references
+    such as "my previous question".
+
+    Do not use previous answers as factual evidence.
     Include citations in this format:
     [Source: filename, Page: number]
     """

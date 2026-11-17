@@ -6,6 +6,7 @@ from pathlib import Path
 from app.llm import get_llm_response
 from app.vectorstore import search_documents
 from app.rag import answer_question
+from app.graph import run_graph
 
 from app.records import load_records, get_by_id, search
 
@@ -20,6 +21,19 @@ class Question(BaseModel):
 
 class ChatRequest(BaseModel):
     question: str
+
+class AgentRequest(BaseModel):
+    question: str
+    fee_paid: float | None = None
+    admission_year: int | None = None
+    withdrawal_date: str | None = None
+    policy_type: str | None = None
+    last_date_of_admission: str | None = None
+    full_refund_until: str | None = None
+    max_deduction_until: str | None = None
+    approval_required: bool = False
+    approved: bool | None = None
+    thread_id: str = "default"
 
 @app.get("/health")
 def health():
@@ -127,3 +141,29 @@ def ask(data: Question):
         "answer": result["answer"],
         "citations": result["citations"]
     }
+
+@app.post("/agent")
+def agent(data: AgentRequest):
+
+    try:
+        result = run_graph(
+            question=data.question,
+            fee_paid=data.fee_paid,
+            admission_year=data.admission_year,
+            withdrawal_date=data.withdrawal_date,
+            policy_type=data.policy_type,
+            last_date_of_admission=data.last_date_of_admission,
+            full_refund_until=data.full_refund_until,
+            max_deduction_until=data.max_deduction_until,
+            approval_required=data.approval_required,
+            approved=data.approved,
+            thread_id=data.thread_id
+        )
+
+        return result
+
+    except ValueError as error:
+        raise HTTPException(
+            status_code=400,
+            detail=str(error)
+        )

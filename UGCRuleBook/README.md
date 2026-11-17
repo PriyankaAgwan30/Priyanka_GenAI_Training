@@ -86,6 +86,11 @@ UGCRuleBook/
 │   ├── vectorstore.py
 │   ├── llm.py
 │   ├── rag.py
+│   ├── records.py
+│   ├── smart_search.py
+│   ├── tools.py
+│   ├── agent_loop.py
+│   ├── graph.py
 │   └── main.py
 │
 ├── data/
@@ -117,6 +122,7 @@ The project provides API endpoints through FastAPI.
 | GET | `/search?q=...` | Search records using TF-IDF |
 | POST | `/questions` | Submit a student question and find matching records |
 | POST | `/ask` | Ask a question and receive a RAG-based answer with citations |
+| POST | `/agent` | Run the LangGraph agent workflow with tool selection, approval, and memory |
 
 ### Example: POST /ask
 
@@ -248,3 +254,104 @@ The goal of UGCRuleBook is to help students understand their rights without havi
 By combining document retrieval and language generation, the project provides a simpler way to find information about UGC regulations and student-related issues.
 
 The answers are based on available source documents, with citations to help students refer to the original information.
+## 12. Day 9 – Agentic Workflow and LangGraph
+
+Day 9 adds an agentic workflow to UGCRuleBook. The agent can select and use different tools depending on the student's question.
+
+### 1. Tools
+
+The project includes two tools:
+
+- **RAG Search Tool:** Searches UGC documents and returns an answer with source citations.
+- **Fee Refund Calculator:** Calculates the estimated refund amount using a configured refund policy, withdrawal date, and applicable deadlines.
+
+The calculator supports:
+- Calendar-based refund deadlines.
+- The five-tier refund table from the 2018 UGC policy.
+
+The applicable policy must be selected and verified before calculation. The calculator does not independently determine which regulator or academic-year policy legally applies.
+
+### 2. Hand-Written Agent Loop
+
+The file `app/agent_loop.py` implements a simple agent loop.
+
+It checks the student's question and selects an appropriate tool:
+
+1. Identify the student's question.
+2. Check whether it is related to fee refunds.
+3. Call the fee-refund calculator when the required inputs are provided.
+4. Otherwise, call the RAG search tool.
+5. Return the tool result.
+
+### 3. LangGraph Workflow
+
+The file `app/graph.py` rebuilds the agent workflow using LangGraph.
+
+The workflow includes:
+
+- Conditional routing to select the appropriate tool.
+- An approval node before the fee-refund calculator.
+- A memory node to save conversation history.
+- A checkpointer using LangGraph's `MemorySaver`.
+
+The fee-refund calculator runs only when approval is granted if approval is required.
+
+Conversation memory is maintained using a thread ID. The current `MemorySaver` implementation stores memory in the running application process, so memory is cleared when the application restarts.
+
+### 4. Day 9 Workflow
+
+1. Student submits a question.
+2. LangGraph identifies the appropriate workflow.
+3. For fee-refund questions, the approval step is checked.
+4. If approval is granted, the calculator runs.
+5. For other questions, the RAG search tool retrieves relevant information.
+6. The result is saved in conversation memory.
+7. The API returns the result.
+
+### 5. New API Endpoint
+
+| Method | Endpoint | Purpose |
+|---|---|---|
+| POST | `/agent` | Run the LangGraph agent workflow with tool selection, approval, and memory |
+
+### Example: POST /agent
+
+Fee-refund request:
+
+```json
+{
+  "question": "How much fee refund can I get?",
+  "fee_paid": 95000,
+  "admission_year": 2025,
+  "withdrawal_date": "2025-10-20",
+  "policy_type": "calendar_deadline",
+  "full_refund_until": "2025-09-30",
+  "max_deduction_until": "2025-10-31",
+  "approval_required": true,
+  "approved": true,
+  "thread_id": "student1"
+}
+
+```
+
+The response includes:
+- The selected tool.
+- The calculated refund amount.
+- The policy clause used.
+- Approval status.
+- Conversation history.
+
+The example dates and policy settings are supplied as test inputs. They do not establish an individual's legal refund entitlement.
+
+### 6. Day 9 Testing
+
+The following workflows were tested through the FastAPI endpoint:
+
+| Test | Result |
+|---|---|
+| Fee-refund calculator through API | Passed |
+| RAG tool selection through API | Passed |
+| Conversation memory | Passed |
+| Previous-question recall | Passed |
+| Approval denied – calculator skipped | Passed |
+| Approval granted – calculator executed | Passed |
