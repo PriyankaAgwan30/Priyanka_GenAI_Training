@@ -1,9 +1,10 @@
-
 import re
 from pathlib import Path
 
 from pypdf import PdfReader
 from bs4 import BeautifulSoup
+from pdf2image import convert_from_path
+import pytesseract
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -17,6 +18,30 @@ def clean_text(text):
     text = re.sub(r"\s+", " ", text)
     text = re.sub(r"\bde\s+nial\b", "denial", text, flags=re.IGNORECASE)
     return text.strip()
+
+
+def extract_page_with_ocr(pdf_path, page_number):
+    try:
+        images = convert_from_path(
+            str(pdf_path),
+            dpi=200,
+            first_page=page_number,
+            last_page=page_number
+        )
+
+        if not images:
+            return ""
+
+        text = pytesseract.image_to_string(
+            images[0],
+            lang="eng+hin"
+        )
+
+        return clean_text(text)
+
+    except Exception as error:
+        print(f"OCR failed for {pdf_path.name}, page {page_number}: {error}")
+        return ""
 
 
 def split_text(text, chunk_size=CHUNK_SIZE, overlap=CHUNK_OVERLAP):
@@ -72,11 +97,18 @@ def get_pdf_documents(pdf_path):
 
             text = page.extract_text() or ""
 
-            if not text.strip():
+            if len(text.strip()) < 50:
+                print(f"Using OCR: {pdf_path.name}, page {page_number}")
+                text = extract_page_with_ocr(pdf_path, page_number)
+
+            text = clean_text(text)
+
+            if not text:
+                print(f"No text found: {pdf_path.name}, page {page_number}")
                 continue
 
             documents.append({
-                "text": clean_text(text),
+                "text": text,
                 "metadata": {
                     "source": pdf_path.name,
                     "page": page_number,
@@ -111,7 +143,6 @@ def get_html_documents(html_path):
             unwanted.decompose()
 
         text = soup.get_text(separator="\n")
-
         text = clean_text(text)
 
         if text:

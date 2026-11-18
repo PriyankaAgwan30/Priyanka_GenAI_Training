@@ -6,7 +6,7 @@ from dataclasses import asdict
 
 from pypdf import PdfReader
 
-from app.models import Record
+from backend.models import Record
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent

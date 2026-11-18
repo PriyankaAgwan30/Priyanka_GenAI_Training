@@ -5,3 +5,10 @@ __pycache__/
 
 # ChromaDB generated database
 data/chroma_db/
+
+# Local feedback data
+frontend/feedback.csv
+data/feedback.csv
+
+# Generated OCR and processed files
+data/processed/

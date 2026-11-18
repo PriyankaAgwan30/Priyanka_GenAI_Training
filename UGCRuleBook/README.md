@@ -355,3 +355,58 @@ The following workflows were tested through the FastAPI endpoint:
 | Previous-question recall | Passed |
 | Approval denied – calculator skipped | Passed |
 | Approval granted – calculator executed | Passed |
+
+## 13. Day 10 – Streamlit UI and Complaint Escalation
+
+Day 10 adds a Streamlit user interface to make UGCRuleBook easier for students to use.
+
+### 1. Streamlit Chat Interface
+
+The application provides:
+- A chat interface for asking student-rights questions.
+- Integration with the FastAPI `/ask` and `/agent` endpoints.
+- Answers supported by retrieved UGC documents.
+- Source citations showing the document name and page number.
+- Thumbs-up and thumbs-down feedback for responses.
+
+### 2. Complaint Escalation Stepper
+
+The application provides complaint guidance for four categories:
+
+- Fee refund
+- Ragging
+- Harassment
+- Examination marks
+
+The escalation path helps students understand where to raise a grievance:
+
+1. **College Students' Grievance Redressal Committee (SGRC):** Submit the complaint to the institution's committee.
+2. **University Ombudsperson:** A student may appeal against the SGRC decision within 15 days of receiving it.
+3. **UGC e-Samadhan / Helpline:** An additional channel for seeking assistance or reporting unresolved concerns.
+
+### 3. Important UGC 2023 Timelines
+
+According to the UGC (Redressal of Grievances of Students) Regulations, 2023:
+
+| Process | Timeline |
+|---|---|
+| Institution forwards an online complaint to the SGRC | Within 15 days |
+| SGRC sends its report and recommendations | Preferably within 15 working days |
+| Student appeals against the SGRC decision | Within 15 days of receiving the decision |
+| Ombudsperson works to resolve the appeal | Within 30 days of receiving it |
+
+These timelines are based on Sections 5 and 8 of the regulations. The 30-day period is an obligation to make all efforts to resolve the grievance, not a guaranteed outcome.
+
+### 4. Application Screenshot
+
+The following screenshot shows the UGCRuleBook application interface.
+
+![UGCRuleBook Day 10 Screenshot](docs/screenshots/ugcrulebook_day10.png)
+
+### 5. How to Run the Streamlit Application
+
+Start the FastAPI backend in one terminal:
+
+```bash
+source myenv/bin/activate
+python -m uvicorn backend.main:app --reload

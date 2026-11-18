@@ -1,8 +1,8 @@
 
 import numpy as np
 
-from app.chunking import chunk_documents
-from app.embed import generate_embeddings
+from backend.chunking import chunk_documents
+from backend.embed import generate_embeddings
 
 
 def semantic_search(question, chunks, chunk_embeddings, top_k=10):

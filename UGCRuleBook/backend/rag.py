@@ -1,6 +1,5 @@
-
-from app.vectorstore import search_documents
-from app.llm import get_llm_response
+from backend.vectorstore import search_documents
+from backend.llm import get_llm_response
 
 
 MIN_RELEVANCE_SCORE = 0.30
@@ -14,17 +13,42 @@ def answer_question(question, top_k=5, conversation_history=None):
             "citations": []
         }
 
-    # Step 1: Retrieve relevant chunks
-    results = search_documents(question, top_k)
+    # Step 1: Expand queries for better document retrieval
+    question_lower = question.lower()
+    retrieval_query = question
 
-    # Step 2: Check whether relevant information was found
+    if "ragging" in question_lower:
+        retrieval_query = (
+            question
+            + " What acts constitute ragging, including teasing, "
+            "rudeness, physical abuse, sexual abuse, verbal abuse, "
+            "financial extortion, forceful expenditure, humiliation, "
+            "psychological harm, and forcing students to perform tasks?"
+        )
+
+    elif any(word in question_lower for word in [
+        "certificate", "certificates", "documents", "original marksheet"
+    ]):
+        retrieval_query = (
+            question
+            + " withholding of or refusal to return any document "
+            "in the form of certificates of degree diploma or any "
+            "other award deposited by a student to compel payment "
+            "of fees for a course or program of study which the "
+            "student does not intend to pursue"
+        )
+
+    # Step 2: Retrieve relevant chunks
+    results = search_documents(retrieval_query, top_k)
+
+    # Step 3: Check relevance
     if not results or results[0]["score"] < MIN_RELEVANCE_SCORE:
         return {
             "answer": "I don't know",
             "citations": []
         }
 
-    # Step 3: Prepare context and citations
+    # Step 4: Prepare context and citations
     context = ""
     citations = []
 
@@ -48,7 +72,7 @@ def answer_question(question, top_k=5, conversation_history=None):
         if citation not in citations:
             citations.append(citation)
 
-    # Step 4: Prepare instructions for the LLM
+    # Step 5: Prepare system instructions
     system_prompt = """
     You are UGCRuleBook, an assistant that answers
     student-rights questions using UGC documents.
@@ -90,7 +114,7 @@ def answer_question(question, top_k=5, conversation_history=None):
     [Source: filename, Page: number]
     """
 
-    # Step 5: Generate the answer
+    # Step 6: Generate answer
     answer = get_llm_response(prompt, system_prompt)
 
     if not answer or "i don't know" in answer.lower():

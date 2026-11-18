@@ -3,8 +3,8 @@ from pathlib import Path
 
 import chromadb
 
-from app.chunking import chunk_documents
-from app.embed import generate_embeddings
+from backend.chunking import chunk_documents
+from backend.embed import generate_embeddings
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
