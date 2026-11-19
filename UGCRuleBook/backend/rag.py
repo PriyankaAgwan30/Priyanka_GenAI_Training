@@ -1,6 +1,5 @@
-from backend.vectorstore import search_documents
 from backend.llm import get_llm_response
-
+from backend.vectorstore import search_documents
 
 MIN_RELEVANCE_SCORE = 0.30
 

@@ -18,8 +18,8 @@ def fee_refund_calculator(
         raise ValueError("Maximum deduction cannot be negative.")
 
     if not isinstance(admission_year, int):
-        raise ValueError("Admission year must be an integer.")
-
+        raise TypeError("Admission year must be an integer.")
+    
     def parse_date(value):
         try:
             return datetime.strptime(value, "%Y-%m-%d").date()

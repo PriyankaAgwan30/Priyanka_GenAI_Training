@@ -6,7 +6,6 @@ import chromadb
 from backend.chunking import chunk_documents
 from backend.embed import generate_embeddings
 
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 DB_PATH = BASE_DIR / "data" / "chroma_db"

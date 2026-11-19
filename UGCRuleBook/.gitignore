@@ -12,3 +12,5 @@ data/feedback.csv
 
 # Generated OCR and processed files
 data/processed/
+
+.DS_Store

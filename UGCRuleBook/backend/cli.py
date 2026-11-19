@@ -1,6 +1,5 @@
 
-from backend.records import load_records, search, count_by, get_by_id
-
+from backend.records import count_by, get_by_id, load_records, search
 
 records = load_records()
 

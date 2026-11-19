@@ -1,10 +1,10 @@
 
-import streamlit as st
-import requests
 import csv
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
 
+import requests
+import streamlit as st
 
 # -----------------------------
 # Basic settings
@@ -138,64 +138,62 @@ if page == "Student Chat":
         with st.chat_message("user"):
             st.markdown(question)
 
-        with st.chat_message("assistant"):
+        with st.chat_message("assistant"), st.spinner("Finding the answer..."):
 
-            with st.spinner("Finding the answer..."):
-
-                try:
-                    if api_mode == "RAG (/ask)":
-                        response = requests.post(
-                            f"{API_URL}/ask",
-                            json={"question": question},
-                            timeout=120
-                        )
-
-                    else:
-                        response = requests.post(
-                            f"{API_URL}/agent",
-                            json={
-                                "question": question,
-                                "thread_id": "ugcrulebook_student"
-                            },
-                            timeout=120
-                        )
-
-                    response.raise_for_status()
-                    data = response.json()
-
-                    if api_mode == "RAG (/ask)":
-                        answer = data.get("answer", "I don't know")
-                        citations = data.get("citations", [])
-
-                    else:
-                        result = data.get("result", {})
-
-                        if isinstance(result, dict):
-                            answer = result.get("answer", str(result))
-                            citations = result.get("citations", [])
-                        else:
-                            answer = str(result)
-                            citations = []
-
-                    st.markdown(answer)
-                    show_citations(citations)
-
-                    st.session_state.messages.append({
-                        "role": "assistant",
-                        "content": answer,
-                        "citations": citations,
-                        "question": question,
-                        "feedback_saved": False
-                    })
-
-                except requests.exceptions.RequestException as error:
-                    answer = (
-                        "I could not connect to the backend. "
-                        "Please start the FastAPI server and try again."
+            try:
+                if api_mode == "RAG (/ask)":
+                    response = requests.post(
+                        f"{API_URL}/ask",
+                        json={"question": question},
+                        timeout=120
                     )
 
-                    st.error(answer)
-                    st.caption(str(error))
+                else:
+                    response = requests.post(
+                        f"{API_URL}/agent",
+                        json={
+                            "question": question,
+                            "thread_id": "ugcrulebook_student"
+                        },
+                        timeout=120
+                    )
+
+                response.raise_for_status()
+                data = response.json()
+
+                if api_mode == "RAG (/ask)":
+                    answer = data.get("answer", "I don't know")
+                    citations = data.get("citations", [])
+
+                else:
+                    result = data.get("result", {})
+
+                    if isinstance(result, dict):
+                        answer = result.get("answer", str(result))
+                        citations = result.get("citations", [])
+                    else:
+                        answer = str(result)
+                        citations = []
+
+                st.markdown(answer)
+                show_citations(citations)
+
+                st.session_state.messages.append({
+                    "role": "assistant",
+                    "content": answer,
+                    "citations": citations,
+                    "question": question,
+                    "feedback_saved": False
+                })
+
+            except requests.exceptions.RequestException as error:
+                answer = (
+                    "I could not connect to the backend. "
+                    "Please start the FastAPI server and try again."
+                )
+
+                st.error(answer)
+                st.caption(str(error))
 
 
 # -----------------------------
@@ -225,51 +223,51 @@ elif page == "Complaint Path":
         "Fee Refund": [
             (
                 "1. College Grievance Committee (SGRC)",
-                "Submit a written complaint with fee receipts, "
-                "admission details and withdrawal proof.",
-                "SGRC should send its report and recommendations "
-                "preferably within 15 working days."
+                ("Submit a written complaint with fee receipts, "
+                "admission details and withdrawal proof."),
+                ("SGRC should send its report and recommendations "
+                "preferably within 15 working days.")
             ),
             (
                 "2. University Ombudsperson",
-                "If you are not satisfied with the SGRC decision, "
-                "you can appeal to the Ombudsperson.",
-                "Appeal within 15 days of receiving the SGRC decision. "
+                ("If you are not satisfied with the SGRC decision, "
+                "you can appeal to the Ombudsperson."),
+                ("Appeal within 15 days of receiving the SGRC decision. "
                 "The Ombudsperson should make efforts to resolve it "
-                "within 30 days of receiving the appeal."
+                "within 30 days of receiving the appeal.")
             ),
             (
                 "3. UGC e-Samadhan",
-                "If the issue remains unresolved, you can approach "
+                ("If the issue remains unresolved, you can approach "
                 "the UGC grievance portal with your complaint "
-                "and supporting documents.",
-                "No separate resolution deadline is specified here "
-                "for the UGC portal."
+                "and supporting documents."),
+                ("No separate resolution deadline is specified here "
+                "for the UGC portal.")
             )
         ],
 
         "Ragging": [
             (
                 "1. College Anti-Ragging Committee / Squad",
-                "Report the incident immediately to the college "
+                ("Report the incident immediately to the college "
                 "Anti-Ragging Committee, Anti-Ragging Squad "
-                "or institutional authorities.",
-                "Report immediately. Do not wait for the ordinary "
-                "grievance timeline."
+                "or institutional authorities."),
+                ("Report immediately. Do not wait for the ordinary "
+                "grievance timeline.")
             ),
             (
                 "2. University authorities / Ombudsperson",
-                "Use the applicable institutional grievance and "
+                ("Use the applicable institutional grievance and "
                 "university escalation process if the issue is "
-                "not addressed.",
-                "For an SGRC decision, the appeal period is "
+                "not addressed."),
+                ("For an SGRC decision, the appeal period is "
                 "15 days. Ombudsperson efforts to resolve an appeal "
-                "are within 30 days."
+                "are within 30 days.")
             ),
             (
                 "3. National Anti-Ragging Helpline",
-                "Call 1800-180-5522 or visit the official "
-                "Anti-Ragging portal.",
+                ("Call 1800-180-5522 or visit the official "
+                "Anti-Ragging portal."),
                 "Report immediately. Do not wait for a deadline."
             )
         ],
@@ -277,51 +275,51 @@ elif page == "Complaint Path":
         "Harassment": [
             (
                 "1. College Internal Committee / SGRC",
-                "For sexual harassment, contact the institution's "
+                ("For sexual harassment, contact the institution's "
                 "Internal Committee (IC). For other student "
-                "grievances, contact the SGRC.",
-                "Use the applicable committee's procedure. "
-                "Do not delay reporting."
+                "grievances, contact the SGRC."),
+                ("Use the applicable committee's procedure. "
+                "Do not delay reporting.")
             ),
             (
                 "2. University Ombudsperson",
-                "For grievances covered by the UGC student "
+                ("For grievances covered by the UGC student "
                 "grievance regulations, use the appeal process "
-                "after the SGRC decision.",
-                "Appeal within 15 days of the SGRC decision. "
+                "after the SGRC decision."),
+                ("Appeal within 15 days of the SGRC decision. "
                 "The Ombudsperson should make efforts to resolve "
-                "the appeal within 30 days."
+                "the appeal within 30 days.")
             ),
             (
                 "3. UGC e-Samadhan",
-                "You may approach the UGC grievance portal "
-                "for an unresolved UGC-related grievance.",
-                "No separate resolution deadline is specified "
-                "here for the UGC portal."
+                ("You may approach the UGC grievance portal "
+                "for an unresolved UGC-related grievance."),
+                ("No separate resolution deadline is specified "
+                "here for the UGC portal.")
             )
         ],
 
         "Marks / Examination": [
             (
                 "1. College Grievance Committee (SGRC)",
-                "Submit the examination complaint with your "
-                "marksheet, answer-sheet details and evidence.",
-                "SGRC should send its report and recommendations "
-                "preferably within 15 working days."
+                ("Submit the examination complaint with your "
+                "marksheet, answer-sheet details and evidence."),
+                ("SGRC should send its report and recommendations "
+                "preferably within 15 working days.")
             ),
             (
                 "2. University Ombudsperson",
                 "You may appeal against the SGRC decision.",
-                "Appeal within 15 days of receiving the decision. "
+                ("Appeal within 15 days of receiving the decision. "
                 "The Ombudsperson should make efforts to resolve "
-                "the appeal within 30 days."
+                "the appeal within 30 days.")
             ),
             (
                 "3. UGC e-Samadhan",
-                "For an unresolved UGC-related grievance, "
-                "you may approach the UGC portal.",
-                "No separate resolution deadline is specified "
-                "here for the UGC portal."
+                ("For an unresolved UGC-related grievance, "
+                "you may approach the UGC portal."),
+                ("No separate resolution deadline is specified "
+                "here for the UGC portal.")
             )
         ]
     }

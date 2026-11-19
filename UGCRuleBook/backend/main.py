@@ -1,15 +1,15 @@
 
+from pathlib import Path
+
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from backend.smart_search import smart_search
-from pathlib import Path
-from backend.llm import get_llm_response
-from backend.vectorstore import search_documents
-from backend.rag import answer_question
+
 from backend.graph import run_graph
-
-from backend.records import load_records, get_by_id, search
-
+from backend.llm import get_llm_response
+from backend.rag import answer_question
+from backend.records import get_by_id, load_records
+from backend.smart_search import smart_search
+from backend.vectorstore import search_documents
 
 app = FastAPI(title="UGCRuleBook API")
 

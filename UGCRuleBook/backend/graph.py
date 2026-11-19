@@ -1,21 +1,22 @@
-from typing import TypedDict, Optional, Any
-from langgraph.graph import StateGraph, START, END
+from typing import Any, TypedDict
+
 from langgraph.checkpoint.memory import MemorySaver
+from langgraph.graph import END, START, StateGraph
 
 
 class AgentState(TypedDict):
     question: str
-    fee_paid: Optional[float]
-    admission_year: Optional[int]
-    withdrawal_date: Optional[str]
-    policy_type: Optional[str]
-    last_date_of_admission: Optional[str]
-    full_refund_until: Optional[str]
-    max_deduction_until: Optional[str]
-    tool_used: Optional[str]
-    result: Optional[Any]
+    fee_paid: float | None
+    admission_year: int | None
+    withdrawal_date: str | None
+    policy_type: str | None
+    last_date_of_admission: str | None
+    full_refund_until: str | None
+    max_deduction_until: str | None
+    tool_used: str | None
+    result: Any | None
     approval_required: bool
-    approved: Optional[bool]
+    approved: bool | None
     conversation_history: list
 
 
@@ -96,12 +97,11 @@ def fee_refund_node(state: AgentState):
 def approval_node(state: AgentState):
     print("LangGraph: Checking approval...")
 
-    if state["approval_required"]:
-        if state["approved"] is not True:
-            return {
-                "result": "Approval is required before proceeding.",
-                "approved": False
-            }
+    if state["approval_required"] and state["approved"] is not True:
+        return {
+            "result": "Approval is required before proceeding.",
+            "approved": False
+        }
 
     return {
         "approved": True

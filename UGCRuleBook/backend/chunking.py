@@ -1,11 +1,16 @@
 import re
 from pathlib import Path
 
-from pypdf import PdfReader
+import pytesseract
 from bs4 import BeautifulSoup
 from pdf2image import convert_from_path
-import pytesseract
-
+from pdf2image.exceptions import (
+    PDFInfoNotInstalledError,
+    PDFPageCountError,
+    PDFPopplerTimeoutError,
+)
+from pypdf import PdfReader
+from pypdf.errors import PdfReadError
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 RAW_DIR = BASE_DIR / "data" / "raw"
@@ -39,7 +44,14 @@ def extract_page_with_ocr(pdf_path, page_number):
 
         return clean_text(text)
 
-    except Exception as error:
+    except (
+        PDFInfoNotInstalledError,
+        PDFPageCountError,
+        PDFPopplerTimeoutError,
+        pytesseract.TesseractNotFoundError,
+        pytesseract.TesseractError,
+        OSError,
+    ) as error:
         print(f"OCR failed for {pdf_path.name}, page {page_number}: {error}")
         return ""
 
@@ -118,7 +130,7 @@ def get_pdf_documents(pdf_path):
 
         print("Processed PDF:", pdf_path.name)
 
-    except Exception as error:
+    except (PdfReadError, OSError) as error:
         print("Error reading PDF:", pdf_path.name, error)
 
     return documents
@@ -157,7 +169,7 @@ def get_html_documents(html_path):
 
         print("Processed HTML:", html_path.name)
 
-    except Exception as error:
+    except (OSError, UnicodeDecodeError) as error:
         print("Error reading HTML:", html_path.name, error)
 
     return documents

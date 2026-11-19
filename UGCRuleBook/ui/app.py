@@ -1,11 +1,10 @@
 import csv
 import uuid
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
 
 import requests
 import streamlit as st
-
 
 # ---------------- CONFIGURATION ----------------
 

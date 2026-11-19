@@ -1,13 +1,13 @@
 
 import json
 import re
-from pathlib import Path
 from dataclasses import asdict
+from pathlib import Path
 
 from pypdf import PdfReader
+from pypdf.errors import PdfReadError
 
 from backend.models import Record
-
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 RAW_DIR = BASE_DIR / "data" / "raw"
@@ -37,7 +37,7 @@ def read_pdf_files():
 
             print("Read:", pdf_file.name)
 
-        except Exception as error:
+        except (PdfReadError, OSError) as error:
             print("Could not read", pdf_file.name, ":", error)
 
     return pdf_text
@@ -124,7 +124,7 @@ def extract_records(pdf_text):
 
             print("Extracted:", rule["title"])
 
-        except Exception as error:
+        except (re.error, TypeError, ValueError) as error:
             print("Skipping bad record:", rule["title"], error)
 
     return records
@@ -141,7 +141,7 @@ def save_records(records):
         print("\nTotal records saved:", len(records))
         print("Saved to:", OUTPUT_FILE)
 
-    except Exception as error:
+    except (OSError, TypeError, ValueError) as error:
         print("Error saving records:", error)
 
 
