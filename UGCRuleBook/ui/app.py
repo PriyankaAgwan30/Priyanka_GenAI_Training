@@ -1,4 +1,5 @@
 import csv
+import os
 import uuid
 from datetime import datetime
 from pathlib import Path
@@ -19,7 +20,7 @@ st.set_page_config(
 
 API_URL = st.sidebar.text_input(
     "Backend API URL",
-    value="http://127.0.0.1:8000"
+    value=os.getenv("UGCRULEBOOK_API_URL", "http://127.0.0.1:8000")
 ).rstrip("/")
 
 if "thread_id" not in st.session_state:

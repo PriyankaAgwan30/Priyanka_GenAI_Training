@@ -1,0 +1,38 @@
+# Python virtual environments
+myenv/
+.venv/
+venv/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Git
+.git/
+.gitignore
+
+# Environment variables and secrets
+.env
+.env.*
+
+# Local databases
+data/chroma_db/
+
+# Generated data
+data/processed/
+
+# Feedback data
+data/feedback.csv
+frontend/feedback.csv
+
+# macOS files
+.DS_Store
+
+# Testing and linting caches
+.pytest_cache/
+.ruff_cache/
+
+# IDE files
+.vscode/
+.idea/
