@@ -24,7 +24,7 @@ jobs:
           cd UGCRuleBook
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install ruff
+          pip install ruff pytest
 
       - name: Run Ruff
         run: cd UGCRuleBook && python -m ruff check .
