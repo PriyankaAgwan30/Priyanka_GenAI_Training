@@ -1,3 +1,5 @@
+[![UGCRuleBook CI](https://github.com/PriyankaAgwan30/Priyanka_GenAI_Training/actions/workflows/ci.yml/badge.svg)](https://github.com/PriyankaAgwan30/Priyanka_GenAI_Training/actions/workflows/ci.yml)
+
 # UGCRuleBook – UGC Student Rights Assistant
 
 ## 1. Product
