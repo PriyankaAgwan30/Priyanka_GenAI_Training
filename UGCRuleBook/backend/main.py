@@ -1,15 +1,14 @@
-
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
-from backend.graph import run_graph
-from backend.llm import get_llm_response
-from backend.rag import answer_question
 from backend.records import get_by_id, load_records
-from backend.smart_search import smart_search
-from backend.vectorstore import search_documents
+
+
+def answer_question(question):
+    from backend.rag import answer_question as rag_answer_question
+    return rag_answer_question(question)
 
 app = FastAPI(title="UGCRuleBook API")
 
@@ -19,8 +18,10 @@ records = load_records()
 class Question(BaseModel):
     question: str
 
+
 class ChatRequest(BaseModel):
     question: str
+
 
 class AgentRequest(BaseModel):
     question: str
@@ -34,6 +35,7 @@ class AgentRequest(BaseModel):
     approval_required: bool = False
     approved: bool | None = None
     thread_id: str = "default"
+
 
 @app.get("/health")
 def health():
@@ -57,12 +59,14 @@ def get_record(id: int):
 
 @app.get("/search")
 def search_records(q: str):
-    results = smart_search(records, q)
-    return results
+    from backend.smart_search import smart_search
+    return smart_search(records, q)
 
 
 @app.post("/questions")
 def ask_question(data: Question):
+    from backend.smart_search import smart_search
+
     results = smart_search(records, data.question)
 
     return {
@@ -72,18 +76,17 @@ def ask_question(data: Question):
     }
 
 
-
 @app.post("/chat")
 def chat(data: ChatRequest):
+    from backend.llm import get_llm_response
+    from backend.smart_search import smart_search
+
     results = smart_search(records, data.question)
 
     system_prompt = Path("prompts/system.txt").read_text()
-
     task_prompt = Path("prompts/answer_question.txt").read_text()
 
-    context = "\n".join([
-        str(record) for record in results
-    ])
+    context = "\n".join(str(record) for record in results)
 
     prompt = task_prompt.format(
         question=data.question,
@@ -99,28 +102,24 @@ def chat(data: ChatRequest):
         answer=answer
     )
 
-    follow_up = get_llm_response(
-        follow_up_prompt,
-        system_prompt
-    )
-
-    confidence = "high" if results else "low"
+    follow_up = get_llm_response(follow_up_prompt, system_prompt)
 
     return {
         "answer": answer,
-        "confidence": confidence,
+        "confidence": "high" if results else "low",
         "follow_up": follow_up
     }
 
 
 @app.get("/search/semantic")
 def semantic_search_endpoint(q: str):
-
     if not q.strip():
         raise HTTPException(
             status_code=400,
             detail="Search query cannot be empty"
         )
+
+    from backend.vectorstore import search_documents
 
     results = search_documents(q, top_k=5)
 
@@ -142,11 +141,13 @@ def ask(data: Question):
         "citations": result["citations"]
     }
 
+
 @app.post("/agent")
 def agent(data: AgentRequest):
+    from backend.graph import run_graph
 
     try:
-        result = run_graph(
+        return run_graph(
             question=data.question,
             fee_paid=data.fee_paid,
             admission_year=data.admission_year,
@@ -159,8 +160,6 @@ def agent(data: AgentRequest):
             approved=data.approved,
             thread_id=data.thread_id
         )
-
-        return result
 
     except ValueError as error:
         raise HTTPException(
