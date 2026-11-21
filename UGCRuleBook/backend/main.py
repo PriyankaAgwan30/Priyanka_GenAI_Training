@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from backend.records import get_by_id, load_records
 
@@ -14,17 +14,14 @@ app = FastAPI(title="UGCRuleBook API")
 
 records = load_records()
 
-
 class Question(BaseModel):
-    question: str
-
+    question: str = Field(min_length=1, max_length=2000)
 
 class ChatRequest(BaseModel):
-    question: str
-
+    question: str = Field(min_length=1, max_length=2000)
 
 class AgentRequest(BaseModel):
-    question: str
+    question: str = Field(min_length=1, max_length=2000)
     fee_paid: float | None = None
     admission_year: int | None = None
     withdrawal_date: str | None = None
@@ -35,8 +32,7 @@ class AgentRequest(BaseModel):
     approval_required: bool = False
     approved: bool | None = None
     thread_id: str = "default"
-
-
+    
 @app.get("/health")
 def health():
     return {"status": "healthy"}
