@@ -1,6 +1,19 @@
 [![UGCRuleBook CI](https://github.com/PriyankaAgwan30/Priyanka_GenAI_Training/actions/workflows/ci.yml/badge.svg)](https://github.com/PriyankaAgwan30/Priyanka_GenAI_Training/actions/workflows/ci.yml)
 
-# UGCRuleBook – UGC Student Rights Assistant
+## Live Deployment
+
+**Backend API:** https://ugcrulebook-api.onrender.com
+
+**Health Check:** https://ugcrulebook-api.onrender.com/health
+
+Deployment platform: Render (Docker)
+
+Health check response:
+
+```json
+{
+  "status": "healthy"
+}
 
 ## 1. Product
 
