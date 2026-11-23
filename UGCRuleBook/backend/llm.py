@@ -4,6 +4,8 @@ import time
 
 from dotenv import load_dotenv
 from google import genai
+from google.genai import types
+from google.genai.errors import APIError
 
 load_dotenv()
 
@@ -14,6 +16,22 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
+
+class LLMProviderError(RuntimeError):
+    status_code = 502
+    public_message = (
+        "The language model rejected the request. Check GEMINI_API_KEY "
+        "and GEMINI_MODEL."
+    )
+
+
+class LLMUnavailableError(LLMProviderError):
+    status_code = 503
+    public_message = (
+        "The language model is temporarily unavailable. Please try again."
+    )
+
+
 def get_llm_response(prompt, system_prompt=""):
     provider = os.getenv("LLM_PROVIDER", "gemini")
 
@@ -21,9 +39,22 @@ def get_llm_response(prompt, system_prompt=""):
         api_key = os.getenv("GEMINI_API_KEY")
 
         if not api_key:
-            raise ValueError("GEMINI_API_KEY is missing in .env")
+            raise LLMProviderError("GEMINI_API_KEY is missing.")
 
-        client = genai.Client(api_key=api_key)
+        client = genai.Client(
+            api_key=api_key,
+            http_options=types.HttpOptions(
+                timeout=30_000,
+                retry_options=types.HttpRetryOptions(
+                    attempts=2,
+                    initial_delay=1,
+                    max_delay=2,
+                    exp_base=2,
+                    jitter=0.1,
+                    http_status_codes=[408, 429, 500, 502, 503, 504]
+                )
+            )
+        )
 
         start_time = time.perf_counter()
 
@@ -66,6 +97,20 @@ def get_llm_response(prompt, system_prompt=""):
 
             return response.text
 
+        except APIError as error:
+            latency = time.perf_counter() - start_time
+
+            logger.exception(
+                "LLM request failed | status=%s | latency=%.2fs",
+                error.code,
+                latency
+            )
+
+            if error.code in (408, 429) or error.code >= 500:
+                raise LLMUnavailableError() from error
+
+            raise LLMProviderError() from error
+
         except Exception:
             latency = time.perf_counter() - start_time
 
@@ -76,4 +121,4 @@ def get_llm_response(prompt, system_prompt=""):
             raise
 
     else:
-        raise ValueError("Unsupported LLM provider")
+        raise LLMProviderError("Unsupported LLM provider.")

@@ -95,6 +95,7 @@ def split_text(text, chunk_size=CHUNK_SIZE, overlap=CHUNK_OVERLAP):
 def get_pdf_documents(pdf_path):
 
     documents = []
+    current_section = None
 
     try:
         reader = PdfReader(str(pdf_path))
@@ -119,13 +120,50 @@ def get_pdf_documents(pdf_path):
                 print(f"No text found: {pdf_path.name}, page {page_number}")
                 continue
 
+            metadata = {
+                "source": pdf_path.name,
+                "page": page_number,
+                "title": title
+            }
+
+            if pdf_path.name == "sexual_harassment_2015.pdf":
+                section_markers = (
+                    (
+                        "responsibilities of the higher educational institution",
+                        "Responsibilities of the Higher Educational Institution"
+                    ),
+                    (
+                        "grievance redressal mechanism",
+                        "Regulation 4: Grievance redressal mechanism"
+                    ),
+                    (
+                        "responsibilities of internal complaints committee",
+                        "Responsibilities of the Internal Complaints Committee (ICC)"
+                    ),
+                    (
+                        "the process for making complaint and conducting inquiry",
+                        "Regulation 6: Process for making complaint and conducting inquiry"
+                    )
+                )
+                page_sections = [current_section] if current_section else []
+                matches = []
+                for marker, section in section_markers:
+                    position = text.lower().find(marker)
+                    if position >= 0:
+                        matches.append((position, section))
+
+                for _, section in sorted(matches):
+                    if section not in page_sections:
+                        page_sections.append(section)
+
+                if matches:
+                    current_section = max(matches, key=lambda match: match[0])[1]
+                if page_sections:
+                    metadata["section"] = " | ".join(page_sections)
+
             documents.append({
                 "text": text,
-                "metadata": {
-                    "source": pdf_path.name,
-                    "page": page_number,
-                    "title": title
-                }
+                "metadata": metadata
             })
 
         print("Processed PDF:", pdf_path.name)

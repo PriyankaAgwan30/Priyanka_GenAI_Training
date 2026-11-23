@@ -1,8 +1,9 @@
 import json
 
 import chromadb
-from app.chunking import chunk_documents
-from app.embed import generate_embeddings
+
+from backend.chunking import chunk_documents
+from backend.embed import generate_embeddings
 
 MIN_RELEVANCE_SCORE = 0.30
 

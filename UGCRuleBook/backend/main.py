@@ -1,8 +1,10 @@
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Query, Request
 from pydantic import BaseModel, Field
+from starlette.responses import JSONResponse
 
+from backend.llm import LLMProviderError
 from backend.records import get_by_id, load_records
 
 
@@ -13,6 +15,22 @@ def answer_question(question):
 app = FastAPI(title="UGCRuleBook API")
 
 records = load_records()
+LLM_ERROR_RESPONSES = {
+    502: {"description": "Check the language model configuration."},
+    503: {"description": "The language model is temporarily unavailable."}
+}
+
+
+@app.exception_handler(LLMProviderError)
+async def handle_llm_provider_error(
+    request: Request,
+    error: LLMProviderError
+):
+    return JSONResponse(
+        status_code=error.status_code,
+        content={"detail": error.public_message}
+    )
+
 
 class Question(BaseModel):
     question: str = Field(min_length=1, max_length=2000)
@@ -39,7 +57,7 @@ def health():
 
 
 @app.get("/records")
-def get_records(limit: int = 20):
+def get_records(limit: int = Query(default=20, ge=1, le=100)):
     return records[:limit]
 
 
@@ -54,7 +72,13 @@ def get_record(id: int):
 
 
 @app.get("/search")
-def search_records(q: str):
+def search_records(q: str = Query(..., min_length=1, max_length=2000)):
+    if not q.strip():
+        raise HTTPException(
+            status_code=400,
+            detail="Search query cannot be empty"
+        )
+
     from backend.smart_search import smart_search
     return smart_search(records, q)
 
@@ -72,7 +96,7 @@ def ask_question(data: Question):
     }
 
 
-@app.post("/chat")
+@app.post("/chat", responses=LLM_ERROR_RESPONSES)
 def chat(data: ChatRequest):
     from backend.llm import get_llm_response
     from backend.smart_search import smart_search
@@ -108,7 +132,9 @@ def chat(data: ChatRequest):
 
 
 @app.get("/search/semantic")
-def semantic_search_endpoint(q: str):
+def semantic_search_endpoint(
+    q: str = Query(..., min_length=1, max_length=2000)
+):
     if not q.strip():
         raise HTTPException(
             status_code=400,
@@ -126,7 +152,7 @@ def semantic_search_endpoint(q: str):
     }
 
 
-@app.post("/ask")
+@app.post("/ask", responses=LLM_ERROR_RESPONSES)
 def ask(data: Question):
 
     result = answer_question(data.question)
@@ -138,7 +164,7 @@ def ask(data: Question):
     }
 
 
-@app.post("/agent")
+@app.post("/agent", responses=LLM_ERROR_RESPONSES)
 def agent(data: AgentRequest):
     from backend.graph import run_graph
 

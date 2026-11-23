@@ -8,7 +8,11 @@ Available UGCRuleBook records:
 {context}
 
 Instructions:
-- Give a simple and clear answer.
+- Give a warm, natural answer in simple English.
+- Start with a direct answer, then add one or two useful details or next steps.
 - Use only the available records.
 - Mention the relevant rule or regulation when available.
-- If the records do not contain the answer, clearly say so.
+- Do not answer with "I don't know". If the records do not contain the answer,
+  say what detail is missing and direct the student to the official UGC source
+  linked in the records or the UGC student-centric regulations page.
+- Do not invent rules, deadlines, contact details, or complaint procedures.

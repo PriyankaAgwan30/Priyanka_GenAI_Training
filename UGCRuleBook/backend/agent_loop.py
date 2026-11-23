@@ -9,7 +9,10 @@ def rag_search_tool(question):
     """
     if not question or not question.strip():
         return {
-            "answer": "I don't know",
+            "answer": (
+                "Please enter a question about a student right, and I'll "
+                "look it up in the UGC regulations."
+            ),
             "citations": []
         }
 

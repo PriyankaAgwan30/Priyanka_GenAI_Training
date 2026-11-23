@@ -10,13 +10,33 @@ import streamlit as st
 # ---------------- CONFIGURATION ----------------
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-FEEDBACK_FILE = BASE_DIR / "data" / "feedback.csv"
+FEEDBACK_FILE = Path(
+    os.getenv(
+        "UGCRULEBOOK_FEEDBACK_FILE",
+        str(BASE_DIR / "data" / "feedback.csv")
+    )
+)
 
 st.set_page_config(
     page_title="UGCRuleBook",
     page_icon="📘",
     layout="wide"
 )
+
+
+def render_citation(citation):
+    label = citation["source"]
+    if citation.get("page") is not None:
+        label += f" (Page {citation['page']})"
+    if citation.get("section"):
+        label += f" — {citation['section']}"
+
+    url = citation.get("url", "")
+    if url.startswith("https://www.ugc.gov.in/"):
+        st.markdown(f"- [{label}]({url})")
+    else:
+        st.write(f"- {label}")
+
 
 API_URL = st.sidebar.text_input(
     "Backend API URL",
@@ -112,10 +132,7 @@ if page == "Student Chat":
                 if citations:
                     with st.expander("View source citations"):
                         for citation in citations:
-                            st.write(
-                                f"- {citation['source']} "
-                                f"(Page {citation['page']})"
-                            )
+                            render_citation(citation)
 
                 question = message.get("question", "")
                 answer = message["content"]
@@ -222,10 +239,7 @@ if page == "Student Chat":
                 if citations:
                     with st.expander("View source citations"):
                         for citation in citations:
-                            st.write(
-                                f"- {citation['source']} "
-                                f"(Page {citation['page']})"
-                            )
+                            render_citation(citation)
 
                 st.session_state.messages.append({
                     "role": "assistant",
@@ -236,11 +250,29 @@ if page == "Student Chat":
 
                 st.rerun()
 
-            except requests.RequestException as error:
+            except requests.HTTPError as error:
+                status_code = (
+                    error.response.status_code
+                    if error.response is not None
+                    else "unknown"
+                )
+                if status_code == 503:
+                    st.error(
+                        "The language model is temporarily busy. "
+                        "Please try again shortly."
+                    )
+                elif status_code == 502:
+                    st.error(
+                        "The language model rejected the request. "
+                        "Check the backend model and API-key configuration."
+                    )
+                else:
+                    st.error(f"The backend returned HTTP {status_code}.")
 
+            except requests.RequestException as error:
                 st.error(
                     "Could not connect to the backend. "
-                    "Check that FastAPI is running."
+                    "Check that FastAPI is running and try again."
                 )
                 st.caption(str(error))
 
