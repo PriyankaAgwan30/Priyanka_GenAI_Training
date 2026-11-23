@@ -1,3 +1,11 @@
+# UGCRuleBook
+
+An AI-powered student rights assistant that helps college students understand UGC regulations through natural-language questions, document-grounded answers, and source citations.
+
+Built using Retrieval-Augmented Generation (RAG), FastAPI, ChromaDB, Sentence Transformers, Google Gemini, and Streamlit.
+
+---
+
 [![UGCRuleBook CI](https://github.com/PriyankaAgwan30/Priyanka_GenAI_Training/actions/workflows/ci.yml/badge.svg)](https://github.com/PriyankaAgwan30/Priyanka_GenAI_Training/actions/workflows/ci.yml)
 
 ## Live Deployment
@@ -89,6 +97,26 @@ The working process is:
 8. Return the answer along with source citations.
 
 The system uses retrieved document information to answer questions. If the available documents do not contain enough information to answer a question, it responds with **"I don't know"** instead of making up an answer.
+
+## Architecture Overview
+
+```mermaid
+flowchart TD
+    A[Student] --> B[Streamlit UI]
+    B --> C[FastAPI Backend]
+    C --> D[RAG Pipeline]
+    D --> E[Query Embedding]
+    E --> F[ChromaDB Vector Search]
+    F --> G[Retrieved UGC Context]
+    G --> H[Gemini LLM]
+    H --> I[Answer with Citations]
+    I --> B
+
+    J[UGC PDFs and Web Documents] --> K[Document Extraction]
+    K --> L[Text Chunking]
+    L --> M[Embedding Generation]
+    M --> F
+```
 
 ## 7. Project Structure
 
@@ -425,3 +453,65 @@ Start the FastAPI backend in one terminal:
 ```bash
 source myenv/bin/activate
 python -m uvicorn backend.main:app --reload
+```
+
+## 14. Day 13 – Production Improvements
+
+### Production Notes
+
+UGCRuleBook includes basic production-oriented improvements for reliability, performance monitoring, and input safety.
+
+- **Latency monitoring:** Measures Gemini response-generation time using `time.perf_counter()`.
+- **Token monitoring:** Logs prompt, response, and total token usage using Gemini usage metadata.
+- **Response caching:** Uses Python `lru_cache` with a maximum capacity of 128 cached responses to reduce repeated LLM calls.
+- **Input validation:** API question inputs are limited to 1–2000 characters using Pydantic validation.
+- **Logging:** Logs request performance and errors for easier debugging.
+- **Prompt-injection testing:** Includes an API-level test for a prompt-injection input using a mocked answer.
+
+### Performance Measurements
+
+Latency was measured across four actual Gemini generation calls during development.
+
+| Metric | Measured Value |
+|---|---:|
+| Requests measured | 4 |
+| Average generation latency | 1.57 seconds |
+| Minimum generation latency | 1.34 seconds |
+| Maximum generation latency | 1.94 seconds |
+
+These measurements represent a small sample of Gemini generation time, not the complete end-to-end RAG pipeline. Performance may vary based on network conditions, prompt size, and model response length.
+
+### Validation Results
+
+| Check | Result |
+|---|---|
+| Pytest test suite | 20 tests passed |
+| Ruff linting | Passed |
+| Question input validation | 1–2000 characters |
+| Response cache | Maximum 128 entries |
+| Prompt-injection test | API-level mocked test included |
+
+The prompt-injection test verifies API behavior with a mocked response. It is not a complete security evaluation of the LLM.
+
+### Demo
+
+Demo video: Coming soon.
+
+### Project Results
+
+| Component | Implementation |
+|---|---|
+| Frontend | Streamlit |
+| Backend | FastAPI |
+| Retrieval | Retrieval-Augmented Generation (RAG) |
+| Vector database | ChromaDB |
+| Embeddings | Sentence Transformers |
+| Language model | Google Gemini |
+| Document processing | PDF and web content extraction |
+| Agent workflow | Tool-based agent and LangGraph workflow |
+| Citations | Retrieved document sources |
+| Testing | Pytest |
+| Code quality | Ruff |
+| Deployment | Render |
+
+UGCRuleBook combines document retrieval, LLM-based answer generation, source citations, student grievance guidance, and an interactive interface to help students understand UGC regulations.
