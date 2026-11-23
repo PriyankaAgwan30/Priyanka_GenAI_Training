@@ -1,7 +1,6 @@
 import logging
 import os
 import time
-from functools import lru_cache
 
 from dotenv import load_dotenv
 from google import genai
@@ -15,7 +14,6 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
-@lru_cache(maxsize=128)
 def get_llm_response(prompt, system_prompt=""):
     provider = os.getenv("LLM_PROVIDER", "gemini")
 
@@ -38,7 +36,7 @@ def get_llm_response(prompt, system_prompt=""):
                 contents=prompt,
                 config={
                     "system_instruction": system_prompt,
-                    "temperature": 0.2,
+                    "temperature": 0.7,
                     "max_output_tokens": 500
                 }
             )
