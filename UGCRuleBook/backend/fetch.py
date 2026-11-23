@@ -17,6 +17,10 @@ documents = [
         "url": "https://www.ugc.gov.in/pdfnews/8091137_gazette-antiragging-Second-Amendment.pdf"
     },
     {
+        "name": "sexual_harassment_2015.pdf",
+        "url": "https://www.ugc.gov.in/pdfnews/7203627_UGC_regulations-harassment.pdf"
+    },
+    {
         "name": "student_regulations.html",
         "url": "https://www.ugc.gov.in/regulations/UGC_Regulations_Student_Centric"
     }

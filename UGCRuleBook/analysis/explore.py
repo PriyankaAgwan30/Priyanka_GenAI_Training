@@ -1,6 +1,7 @@
 
 import pandas as pd
-from app.records import load_records
+
+from backend.records import load_records
 
 records = load_records()
 

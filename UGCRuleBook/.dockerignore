@@ -16,6 +16,16 @@ __pycache__/
 .env
 .env.*
 
+# Development-only files
+.github/
+analysis/
+docs/
+eval/
+frontend/
+tests/
+DAY12.md
+day01_*.py
+
 # Local databases
 data/chroma_db/
 

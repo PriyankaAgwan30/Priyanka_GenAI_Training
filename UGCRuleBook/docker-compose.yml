@@ -4,30 +4,48 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    platform: linux/arm64
-    container_name: ugcrulebook-api
-    command: uvicorn backend.main:app --host 0.0.0.0 --port 8000
     ports:
       - "8000:8000"
-    volumes:
-      - ./data:/app/data
-    env_file:
-      - .env
+    environment:
+      PORT: 8000
+      LLM_PROVIDER: gemini
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-3.5-flash-lite}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
     restart: unless-stopped
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
 
   ui:
     build:
       context: .
       dockerfile: Dockerfile
-    platform: linux/arm64
-    container_name: ugcrulebook-ui
-    command: streamlit run ui/app.py --server.address 0.0.0.0 --server.port 8501
+    command:
+      - streamlit
+      - run
+      - ui/app.py
+      - --server.address
+      - 0.0.0.0
+      - --server.port
+      - "8501"
     ports:
       - "8501:8501"
     volumes:
-      - ./data:/app/data
+      - feedback:/app/feedback
     environment:
       UGCRULEBOOK_API_URL: http://api:8000
+      UGCRULEBOOK_FEEDBACK_FILE: /app/feedback/feedback.csv
     depends_on:
-      - api
+      api:
+        condition: service_healthy
     restart: unless-stopped
+
+volumes:
+  feedback:
