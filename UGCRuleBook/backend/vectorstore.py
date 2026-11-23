@@ -60,11 +60,16 @@ def search_documents(question, top_k=5):
     if not question.strip():
         return []
 
+    collection_size = collection.count()
+
+    if collection_size == 0:
+        return []
+
     question_embedding = generate_embeddings([question])[0]
 
     results = collection.query(
         query_embeddings=[question_embedding.tolist()],
-        n_results=min(top_k, collection.count()),
+        n_results=min(top_k, collection_size),
         include=["documents", "metadatas", "distances"]
     )
 
