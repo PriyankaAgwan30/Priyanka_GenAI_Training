@@ -22,6 +22,11 @@ Health check response:
 {
   "status": "healthy"
 }
+```
+
+The Render Docker image builds its ChromaDB index from the tracked files in
+`data/raw`. Configure `LLM_PROVIDER`, `GEMINI_MODEL`, and `GEMINI_API_KEY` in
+Render's environment settings; keep `.env` local and out of GitHub.
 
 ## 1. Product
 
