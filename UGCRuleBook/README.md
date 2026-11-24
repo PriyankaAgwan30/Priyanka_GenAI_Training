@@ -110,10 +110,15 @@ Create a **Docker** web service from this repository and use the root
 
 The container listens on Render's `PORT` (defaulting to 8000 locally). Set the
 service health-check path to `/health`. For a separately hosted Streamlit UI,
-set `UGCRULEBOOK_API_URL` to the deployed API's base URL. The API's ChromaDB
+set `UGCRULEBOOK_API_URL` in the UI service to the deployed API's base URL
+(for example, `https://ugcrulebook-api.onrender.com`). The UI defaults to this
+deployed URL; for local development, set it to `http://127.0.0.1:8000`.
+Set `GEMINI_API_KEY` on the API service, not the UI service. The API's ChromaDB
 index is part of the image, so rebuild and redeploy after updating documents.
-The existing deployment URL in prior project notes did not respond during this
-check; verify the deployed URL after publishing a new build.
+`/health` only checks that FastAPI is running; `/ask` also needs a valid Gemini
+API key and model. If `/ask` returns 502 or times out, check the API service's
+Render logs and confirm `GEMINI_API_KEY` and `GEMINI_MODEL` are configured
+there.
 
 ## API
 

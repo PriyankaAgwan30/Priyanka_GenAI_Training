@@ -40,7 +40,10 @@ def render_citation(citation):
 
 API_URL = st.sidebar.text_input(
     "Backend API URL",
-    value=os.getenv("UGCRULEBOOK_API_URL", "http://127.0.0.1:8000")
+    value=os.getenv(
+        "UGCRULEBOOK_API_URL",
+        "https://ugcrulebook-api.onrender.com"
+    )
 ).rstrip("/")
 
 if "thread_id" not in st.session_state:
