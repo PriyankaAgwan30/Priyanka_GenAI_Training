@@ -1,5 +1,6 @@
 
 import csv
+import os
 from datetime import datetime
 from pathlib import Path
 
@@ -16,9 +17,10 @@ st.set_page_config(
     layout="wide"
 )
 
-# API_URL = "http://127.0.0.1:8000"
-
-API_URL = "https://ugcrulebook-api.onrender.com"
+API_URL = os.getenv(
+    "UGCRULEBOOK_API_URL",
+    "https://ugcrulebook-api.onrender.com"
+).rstrip("/")
 FEEDBACK_FILE = Path(__file__).parent / "feedback.csv"
 
 st.title("📘 UGCRuleBook")

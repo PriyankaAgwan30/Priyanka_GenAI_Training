@@ -110,10 +110,15 @@ Create a **Docker** web service from this repository and use the root
 
 The container listens on Render's `PORT` (defaulting to 8000 locally). Set the
 service health-check path to `/health`. For a separately hosted Streamlit UI,
-set `UGCRULEBOOK_API_URL` to the deployed API's base URL. The API's ChromaDB
+set `UGCRULEBOOK_API_URL` in the UI service to the deployed API's base URL
+(for example, `https://ugcrulebook-api.onrender.com`). The UI defaults to this
+deployed URL; for local development, set it to `http://127.0.0.1:8000`.
+Set `GEMINI_API_KEY` on the API service, not the UI service. The API's ChromaDB
 index is part of the image, so rebuild and redeploy after updating documents.
-The existing deployment URL in prior project notes did not respond during this
-check; verify the deployed URL after publishing a new build.
+`/health` only checks that FastAPI is running; `/ask` also needs a valid Gemini
+API key and model. If `/ask` returns 502 or times out, check the API service's
+Render logs and confirm `GEMINI_API_KEY` and `GEMINI_MODEL` are configured
+there.
 
 ## API
 
@@ -175,3 +180,23 @@ python -m eval.run_eval
 `analysis/` summarizes the curated records. The evaluation utility measures
 retrieval metrics against `eval/eval_set.json`; it is not a legal or answer
 accuracy certification.
+
+## Demo and final verification
+
+- Live API: https://ugcrulebook-api.onrender.com
+- Live health check: https://ugcrulebook-api.onrender.com/health
+- Interview story and pitch: [docs/interview.md](docs/interview.md)
+- Final progress and rehearsal log: [PROGRESS.md](PROGRESS.md)
+
+Verified before Demo Day:
+
+- 39 Pytest tests pass.
+- Ruff reports all checks passed.
+- The live `/health` endpoint returns HTTP 200.
+- Retrieval evaluation selected the 800/150 chunk configuration with 92.86%
+  keyword coverage, 100% retrieval hit rate, and 100% unsupported rejection.
+- The retrieval evaluation runner is available at `python -m eval.run_eval`.
+
+Failure story: Gemini provider or network errors could previously produce
+unclear failures. The fix added bounded retries and timeouts, typed provider
+errors, a grounded retrieval fallback, and explicit 502/503 API responses.
