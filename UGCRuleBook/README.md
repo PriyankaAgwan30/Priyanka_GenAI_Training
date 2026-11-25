@@ -180,3 +180,23 @@ python -m eval.run_eval
 `analysis/` summarizes the curated records. The evaluation utility measures
 retrieval metrics against `eval/eval_set.json`; it is not a legal or answer
 accuracy certification.
+
+## Demo and final verification
+
+- Live API: https://ugcrulebook-api.onrender.com
+- Live health check: https://ugcrulebook-api.onrender.com/health
+- Interview story and pitch: [docs/interview.md](docs/interview.md)
+- Final progress and rehearsal log: [PROGRESS.md](PROGRESS.md)
+
+Verified before Demo Day:
+
+- 39 Pytest tests pass.
+- Ruff reports all checks passed.
+- The live `/health` endpoint returns HTTP 200.
+- Retrieval evaluation selected the 800/150 chunk configuration with 92.86%
+  keyword coverage, 100% retrieval hit rate, and 100% unsupported rejection.
+- The retrieval evaluation runner is available at `python -m eval.run_eval`.
+
+Failure story: Gemini provider or network errors could previously produce
+unclear failures. The fix added bounded retries and timeouts, typed provider
+errors, a grounded retrieval fallback, and explicit 502/503 API responses.
